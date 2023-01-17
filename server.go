@@ -84,6 +84,7 @@ func routes(e *echo.Echo) {
 	e.GET("/ping", pingHandler)
 	e.POST("/user", addUserHandler)
 	e.PATCH("/deposit", depositHandler)
+	e.PATCH("/reserve", reserveHandler)
 	e.DELETE("/user", deleteHandler)
 }
 
