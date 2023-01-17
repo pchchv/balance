@@ -135,6 +135,10 @@ func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
 	return result, nil
 }
 
+func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
+	return nil, nil
+}
+
 func main() {
 	server()
 }
