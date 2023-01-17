@@ -36,6 +36,10 @@ func deposit(jsonMap map[string]interface{}) error {
 	return nil
 }
 
+func addUser(jsonMap map[string]interface{}) (string, error) {
+	return "", nil
+}
+
 func main() {
 	server()
 }

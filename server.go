@@ -18,7 +18,7 @@ func pingHandler(c echo.Context) error {
 func depositHandler(c echo.Context) error {
 	var jsonMap map[string]interface{}
 	if err := c.Bind(&jsonMap); err != nil {
-		return err
+		return c.NoContent(http.StatusBadRequest)
 	}
 	if err := deposit(jsonMap); err != nil {
 		return c.NoContent(http.StatusBadRequest)
@@ -26,10 +26,23 @@ func depositHandler(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+func addUserHandler(c echo.Context) error {
+	var jsonMap map[string]interface{}
+	if err := c.Bind(&jsonMap); err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	id, err := addUser(jsonMap)
+	if err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	return c.JSON(http.StatusOK, id)
+}
+
 // The declaration of all routes comes from it
 func routes(e *echo.Echo) {
 	e.GET("/ping", pingHandler)
-	e.POST("/deposit", depositHandler)
+	e.POST("/addUser", addUserHandler)
+	e.PATCH("/deposit", depositHandler)
 }
 
 func server() {
