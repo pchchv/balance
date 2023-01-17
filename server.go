@@ -63,6 +63,22 @@ func deleteHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, message)
 }
 
+// Reserves funds
+func reserveHandler(c echo.Context) error {
+	var jsonMap map[string]interface{}
+
+	if err := c.Bind(&jsonMap); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	message, err := reserve(jsonMap)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, message)
+}
+
 // The declaration of all routes comes from it
 func routes(e *echo.Echo) {
 	e.GET("/ping", pingHandler)
