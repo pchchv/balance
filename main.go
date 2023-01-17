@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -21,6 +23,17 @@ func getEnvValue(v string) string {
 		log.Panicf("Value %v does not exist", v)
 	}
 	return value
+}
+
+func deposit(jsonMap map[string]interface{}) error {
+	id := fmt.Sprint(jsonMap["id"])
+	funds, err := strconv.ParseFloat(fmt.Sprint(jsonMap["funds"]), 64)
+	if err != nil {
+		return err
+	}
+	// TODO: Implement data entry in the database
+
+	return nil
 }
 
 func main() {

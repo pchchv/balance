@@ -14,10 +14,14 @@ func pingHandler(c echo.Context) error {
 	return c.String(http.StatusOK, message)
 }
 
-func enrollHandler(c echo.Context) error {
+// Deposits funds into the balance
+func depositHandler(c echo.Context) error {
 	var jsonMap map[string]interface{}
 	if err := c.Bind(&jsonMap); err != nil {
 		return err
+	}
+	if err := deposit(jsonMap); err != nil {
+		return c.NoContent(http.StatusBadRequest)
 	}
 	return c.NoContent(http.StatusOK)
 }
@@ -25,7 +29,7 @@ func enrollHandler(c echo.Context) error {
 // The declaration of all routes comes from it
 func routes(e *echo.Echo) {
 	e.GET("/ping", pingHandler)
-	e.POST("/enroll", enrollHandler)
+	e.POST("/deposit", depositHandler)
 }
 
 func server() {
