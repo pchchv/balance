@@ -136,6 +136,7 @@ func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
 }
 
 func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
+	var balance, reserved, cost, totalBalance float64
 	serviceID := jsonMap["serviceID"]
 	if serviceID == nil {
 		return nil, fmt.Errorf("wrong service id")
@@ -148,11 +149,23 @@ func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 	if uid == nil {
 		return nil, fmt.Errorf("wrong user id")
 	}
-	// user := fmt.Sprint(uid)
+	user := fmt.Sprint(uid)
 
 	// TODO: Implement retrieving user data from the database
 
-	return nil, nil
+	totalBalance -= cost
+	reserved -= cost
+
+	result := map[string]string{
+		"id":            user,
+		"balance":       fmt.Sprint(balance),
+		"reserved":      fmt.Sprint(reserved),
+		"total balance": fmt.Sprint(totalBalance),
+	}
+
+	// TODO: Implement data entry in the database
+
+	return result, nil
 }
 
 func main() {
