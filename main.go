@@ -88,6 +88,7 @@ func deleteUser(jsonMap map[string]interface{}) (map[string]string, error) {
 }
 
 func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
+	var balance float64
 	user := jsonMap["userID"]
 	if user == nil {
 		return nil, fmt.Errorf("Wrong user ID!")
@@ -100,10 +101,21 @@ func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
 	if order == nil {
 		return nil, fmt.Errorf("Wrong order ID!")
 	}
-	cost := jsonMap["cost"]
-	if cost == nil {
+	c := jsonMap["cost"]
+	if c == nil {
 		return nil, fmt.Errorf("Wrong cost!")
 	}
+	cost, err := strconv.ParseFloat(fmt.Sprint(c), 64)
+	if err != nil {
+		return nil, fmt.Errorf("Wrong cost! %v", err)
+	}
+
+	// TODO: Implement getting balance data from the database
+
+	if balance < cost {
+		return nil, fmt.Errorf("The amount on the balance is less than the cost of the service! Balance: %v, Cost: %v", balance, cost)
+	}
+
 	return nil, nil
 }
 
