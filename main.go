@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 )
 
@@ -31,13 +32,33 @@ func deposit(jsonMap map[string]interface{}) error {
 	if err != nil {
 		return err
 	}
+
 	// TODO: Implement data entry in the database
 
 	return nil
 }
 
-func addUser(jsonMap map[string]interface{}) (string, error) {
-	return "", nil
+func addUser(jsonMap map[string]interface{}) (map[string]string, error) {
+	f := jsonMap["funds"]
+	var err error
+	funds := 0.0
+
+	if f != nil {
+		funds, err = strconv.ParseFloat(fmt.Sprint(f), 64)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	id := uuid.New()
+	result := map[string]string{
+		"id":      id.String(),
+		"balance": fmt.Sprint(funds),
+	}
+
+	// TODO: Implement data entry in the database
+
+	return result, nil
 }
 
 func main() {

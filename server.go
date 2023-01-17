@@ -31,11 +31,12 @@ func addUserHandler(c echo.Context) error {
 	if err := c.Bind(&jsonMap); err != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	id, err := addUser(jsonMap)
+	message, err := addUser(jsonMap)
 	if err != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	return c.JSON(http.StatusOK, id)
+
+	return c.JSON(http.StatusOK, message)
 }
 
 // The declaration of all routes comes from it
