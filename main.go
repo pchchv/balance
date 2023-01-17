@@ -88,12 +88,12 @@ func deleteUser(jsonMap map[string]interface{}) (map[string]string, error) {
 }
 
 func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
-	var balance float64
+	var balance, reserved float64
 	uid := jsonMap["userID"]
 	if uid == nil {
 		return nil, fmt.Errorf("wrong user id")
 	}
-	// user := fmt.Sprint(uid)
+	user := fmt.Sprint(uid)
 	serviceID := jsonMap["serviceID"]
 	if serviceID == nil {
 		return nil, fmt.Errorf("wrong service id")
@@ -119,7 +119,20 @@ func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
 		return nil, fmt.Errorf("the amount on the balance is less than the cost of the service! balance: %v, cost: %v", balance, cost)
 	}
 
-	return nil, nil
+	totalBalance := balance
+	balance -= cost
+	reserved += cost
+
+	result := map[string]string{
+		"id":            user,
+		"balance":       fmt.Sprint(balance),
+		"reserver":      fmt.Sprint(reserved),
+		"total balance": fmt.Sprint(totalBalance),
+	}
+
+	// TODO: Implement data entry in the database
+
+	return result, nil
 }
 
 func main() {
