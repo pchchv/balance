@@ -26,16 +26,25 @@ func getEnvValue(v string) string {
 	return value
 }
 
-func deposit(jsonMap map[string]interface{}) error {
+func deposit(jsonMap map[string]interface{}) (map[string]string, error) {
+	var balance float64
 	id := fmt.Sprint(jsonMap["id"])
 	funds, err := strconv.ParseFloat(fmt.Sprint(jsonMap["funds"]), 64)
 	if err != nil {
-		return err
+		return nil, err
+	}
+
+	// TODO: Implement getting balance data from the database
+
+	balance += funds
+	result := map[string]string{
+		"id":      id,
+		"balance": fmt.Sprint(balance),
 	}
 
 	// TODO: Implement data entry in the database
 
-	return nil
+	return result, nil
 }
 
 func addUser(jsonMap map[string]interface{}) (map[string]string, error) {

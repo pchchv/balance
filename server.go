@@ -20,10 +20,12 @@ func depositHandler(c echo.Context) error {
 	if err := c.Bind(&jsonMap); err != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	if err := deposit(jsonMap); err != nil {
+	message, err := deposit(jsonMap)
+	if err != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	return c.NoContent(http.StatusOK)
+
+	return c.JSON(http.StatusOK, message)
 }
 
 func addUserHandler(c echo.Context) error {
