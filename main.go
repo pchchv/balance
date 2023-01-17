@@ -70,6 +70,10 @@ func addUser(jsonMap map[string]interface{}) (map[string]string, error) {
 	return result, nil
 }
 
+func deleteUser(jsonMap map[string]interface{}) error {
+	return nil
+}
+
 func main() {
 	server()
 }
