@@ -12,7 +12,7 @@ import (
 func pingHandler(c echo.Context) error {
 	message := "Balance service. Version 0.0.1"
 
-	return c.String(http.StatusOK, message)
+	return c.JSON(http.StatusOK, message)
 }
 
 // Deposits funds into the balance
@@ -20,12 +20,12 @@ func depositHandler(c echo.Context) error {
 	var jsonMap map[string]interface{}
 
 	if err := c.Bind(&jsonMap); err != nil {
-		return c.NoContent(http.StatusBadRequest)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	message, err := deposit(jsonMap)
 	if err != nil {
-		return c.NoContent(http.StatusBadRequest)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, message)
@@ -36,12 +36,12 @@ func addUserHandler(c echo.Context) error {
 	var jsonMap map[string]interface{}
 
 	if err := c.Bind(&jsonMap); err != nil {
-		return c.NoContent(http.StatusBadRequest)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	message, err := addUser(jsonMap)
 	if err != nil {
-		return c.NoContent(http.StatusBadRequest)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, message)
@@ -52,12 +52,12 @@ func deleteHandler(c echo.Context) error {
 	var jsonMap map[string]interface{}
 
 	if err := c.Bind(&jsonMap); err != nil {
-		return c.NoContent(http.StatusBadRequest)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	message, err := deleteUser(jsonMap)
 	if err != nil {
-		return c.NoContent(http.StatusBadRequest)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, message)
