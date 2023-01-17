@@ -31,6 +31,7 @@ func depositHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, message)
 }
 
+// Adds a user
 func addUserHandler(c echo.Context) error {
 	var jsonMap map[string]interface{}
 
@@ -46,6 +47,7 @@ func addUserHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, message)
 }
 
+// Deletes a user
 func deleteHandler(c echo.Context) error {
 	var jsonMap map[string]interface{}
 
@@ -63,9 +65,9 @@ func deleteHandler(c echo.Context) error {
 // The declaration of all routes comes from it
 func routes(e *echo.Echo) {
 	e.GET("/ping", pingHandler)
-	e.POST("/addUser", addUserHandler)
+	e.POST("/user", addUserHandler)
 	e.PATCH("/deposit", depositHandler)
-	e.DELETE("/delete", deleteHandler)
+	e.DELETE("/user", deleteHandler)
 }
 
 func server() {
