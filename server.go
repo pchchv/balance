@@ -55,11 +55,12 @@ func deleteHandler(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	if err := deleteUser(jsonMap); err != nil {
+	message, err := deleteUser(jsonMap)
+	if err != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	return c.NoContent(http.StatusOK)
+	return c.JSON(http.StatusOK, message)
 }
 
 // The declaration of all routes comes from it

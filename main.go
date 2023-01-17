@@ -70,8 +70,21 @@ func addUser(jsonMap map[string]interface{}) (map[string]string, error) {
 	return result, nil
 }
 
-func deleteUser(jsonMap map[string]interface{}) error {
-	return nil
+func deleteUser(jsonMap map[string]interface{}) (map[string]string, error) {
+	uuid := jsonMap["id"]
+	if uuid == nil {
+		return nil, fmt.Errorf("Wrong ID!")
+	}
+	id := fmt.Sprint(uuid)
+
+	// TODO: Implement deletion of user data from the database
+
+	result := map[string]string{
+		"id":      id,
+		"deleted": "OK",
+	}
+
+	return result, nil
 }
 
 func main() {
