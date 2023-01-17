@@ -88,6 +88,22 @@ func deleteUser(jsonMap map[string]interface{}) (map[string]string, error) {
 }
 
 func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
+	user := jsonMap["userID"]
+	if user == nil {
+		return nil, fmt.Errorf("Wrong user ID!")
+	}
+	service := jsonMap["serviceID"]
+	if service == nil {
+		return nil, fmt.Errorf("Wrong service ID!")
+	}
+	order := jsonMap["orderID"]
+	if order == nil {
+		return nil, fmt.Errorf("Wrong order ID!")
+	}
+	cost := jsonMap["cost"]
+	if cost == nil {
+		return nil, fmt.Errorf("Wrong cost!")
+	}
 	return nil, nil
 }
 
