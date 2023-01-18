@@ -92,7 +92,8 @@ func deleteUser(jsonMap map[string]interface{}) (map[string]string, error) {
 
 // Reserves funds
 func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
-	var balance, reserved float64
+	var reserved float64
+	balance := 111.11
 	uid := jsonMap["userID"]
 	if uid == nil {
 		return nil, fmt.Errorf("wrong user id")

@@ -211,3 +211,59 @@ func TestLoadDelete(t *testing.T) {
 	metrics.Close()
 	log.Printf("99th percentile: %s\n", metrics.Latencies.P99)
 }
+
+func TestReserve(t *testing.T) {
+	body := []byte(`{
+		"userID" : "ec6761fa-4b02-4e93-a213-8fa96eb44d15",
+		"serviceID" : "ec6741fa-4b02-4e03-a303-0fa96eb15d15",
+		"orderID" : "ec6705fa-4b00-0e11-a013-8fa88eb74d35",
+		"cost" : 3.5
+	}`)
+
+	req, err := http.NewRequest(http.MethodPatch, "http://127.0.0.1:"+getEnvValue("PORT")+"/reserve", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("status not OK")
+	}
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			t.Error(err)
+		}
+	}(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestLoadReserve(t *testing.T) {
+	rate := vegeta.Rate{Freq: 1000, Per: time.Second}
+	duration := 5 * time.Second
+	targeter := vegeta.NewStaticTargeter(vegeta.Target{
+		Method: "PATCH",
+		URL:    "http://127.0.0.1:" + getEnvValue("PORT") + "/reserve",
+		Body: []byte(`{
+			"userID" : "ec6761fa-4b02-4e93-a213-8fa96eb44d15",
+			"serviceID" : "ec6741fa-4b02-4e03-a303-0fa96eb15d15",
+			"orderID" : "ec6705fa-4b00-0e11-a013-8fa88eb74d35",
+			"cost" : 3.5
+		}`),
+	})
+	attacker := vegeta.NewAttacker()
+	var metrics vegeta.Metrics
+	for res := range attacker.Attack(targeter, rate, duration, "Big Bang!") {
+		metrics.Add(res)
+	}
+	metrics.Close()
+	log.Printf("99th percentile: %s\n", metrics.Latencies.P99)
+}
