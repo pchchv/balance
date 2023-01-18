@@ -169,7 +169,21 @@ func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 }
 
 func balance(jsonMap map[string]interface{}) (map[string]string, error) {
-	return nil, nil
+	var balance float64
+	uuid := jsonMap["id"]
+	if uuid == nil {
+		return nil, fmt.Errorf("wrong id")
+	}
+	id := fmt.Sprint(uuid)
+
+	// TODO: Implement retrieving user data from the database
+
+	result := map[string]string{
+		"id":      id,
+		"balance": fmt.Sprint(balance),
+	}
+
+	return result, nil
 }
 
 func main() {
