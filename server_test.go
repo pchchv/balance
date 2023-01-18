@@ -99,12 +99,59 @@ func TestLoadDeposit(t *testing.T) {
 	rate := vegeta.Rate{Freq: 1000, Per: time.Second}
 	duration := 5 * time.Second
 	targeter := vegeta.NewStaticTargeter(vegeta.Target{
-		Method: "POST",
+		Method: "PATCH",
 		URL:    "http://127.0.0.1:" + getEnvValue("PORT") + "/deposit",
 		Body: []byte(`{
 			"id" : "ec6761fa-4b02-4e93-a213-8fa96eb44d15",
 			"funds" : 33.3
 		}`),
+	})
+	attacker := vegeta.NewAttacker()
+	var metrics vegeta.Metrics
+	for res := range attacker.Attack(targeter, rate, duration, "Big Bang!") {
+		metrics.Add(res)
+	}
+	metrics.Close()
+	log.Printf("99th percentile: %s\n", metrics.Latencies.P99)
+}
+
+func TestAddUser(t *testing.T) {
+	body := []byte(`{
+		"funds" : 33.3
+	}`)
+
+	req, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:"+getEnvValue("PORT")+"/user", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("status not OK")
+	}
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			t.Error(err)
+		}
+	}(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestLoadAddUser(t *testing.T) {
+	rate := vegeta.Rate{Freq: 1000, Per: time.Second}
+	duration := 5 * time.Second
+	targeter := vegeta.NewStaticTargeter(vegeta.Target{
+		Method: "POST",
+		URL:    "http://127.0.0.1:" + getEnvValue("PORT") + "/user",
 	})
 	attacker := vegeta.NewAttacker()
 	var metrics vegeta.Metrics
