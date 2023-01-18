@@ -161,3 +161,53 @@ func TestLoadAddUser(t *testing.T) {
 	metrics.Close()
 	log.Printf("99th percentile: %s\n", metrics.Latencies.P99)
 }
+
+func TestDelete(t *testing.T) {
+	body := []byte(`{
+		"id" : "ec6761fa-4b02-4e93-a213-8fa96eb44d15"
+	}`)
+
+	req, err := http.NewRequest(http.MethodDelete, "http://127.0.0.1:"+getEnvValue("PORT")+"/user", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("status not OK")
+	}
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			t.Error(err)
+		}
+	}(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestLoadDelete(t *testing.T) {
+	rate := vegeta.Rate{Freq: 1000, Per: time.Second}
+	duration := 5 * time.Second
+	targeter := vegeta.NewStaticTargeter(vegeta.Target{
+		Method: "DELETE",
+		URL:    "http://127.0.0.1:" + getEnvValue("PORT") + "/user",
+		Body: []byte(`{
+			"id" : "ec6761fa-4b02-4e93-a213-8fa96eb44d15"
+		}`),
+	})
+	attacker := vegeta.NewAttacker()
+	var metrics vegeta.Metrics
+	for res := range attacker.Attack(targeter, rate, duration, "Big Bang!") {
+		metrics.Add(res)
+	}
+	metrics.Close()
+	log.Printf("99th percentile: %s\n", metrics.Latencies.P99)
+}
