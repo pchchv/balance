@@ -94,9 +94,25 @@ func receiptHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, message)
 }
 
+func balanceHandler(c echo.Context) error {
+	var jsonMap map[string]interface{}
+
+	if err := c.Bind(&jsonMap); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	message, err := balance(jsonMap)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, message)
+}
+
 // The declaration of all routes comes from it
 func routes(e *echo.Echo) {
 	e.GET("/ping", pingHandler)
+	e.GET("/balance", balanceHandler)
 	e.POST("/user", addUserHandler)
 	e.PATCH("/deposit", depositHandler)
 	e.PATCH("/reserve", reserveHandler)

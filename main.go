@@ -168,6 +168,10 @@ func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 	return result, nil
 }
 
+func balance(jsonMap map[string]interface{}) (map[string]string, error) {
+	return nil, nil
+}
+
 func main() {
 	server()
 }
