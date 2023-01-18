@@ -79,6 +79,7 @@ func reserveHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, message)
 }
 
+// Charges the reserved funds from the user's account
 func receiptHandler(c echo.Context) error {
 	var jsonMap map[string]interface{}
 
@@ -94,6 +95,7 @@ func receiptHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, message)
 }
 
+// Gets the user balance
 func balanceHandler(c echo.Context) error {
 	var jsonMap map[string]interface{}
 
