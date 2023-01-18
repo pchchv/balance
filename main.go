@@ -10,15 +10,15 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Load values from .env into the system
 func init() {
-	// Load values from .env into the system
 	if err := godotenv.Load(); err != nil {
 		log.Panic("No .env file found")
 	}
 }
 
+// Getting a value. Outputs a panic if the value is missing
 func getEnvValue(v string) string {
-	// Getting a value. Outputs a panic if the value is missing
 	value, exist := os.LookupEnv(v)
 	if !exist {
 		log.Panicf("Value %v does not exist", v)
@@ -26,6 +26,7 @@ func getEnvValue(v string) string {
 	return value
 }
 
+// Deposits funds into the balance
 func deposit(jsonMap map[string]interface{}) (map[string]string, error) {
 	var balance float64
 	id := fmt.Sprint(jsonMap["id"])
@@ -47,6 +48,7 @@ func deposit(jsonMap map[string]interface{}) (map[string]string, error) {
 	return result, nil
 }
 
+// Adds a user
 func addUser(jsonMap map[string]interface{}) (map[string]string, error) {
 	f := jsonMap["funds"]
 	var err error
@@ -70,6 +72,7 @@ func addUser(jsonMap map[string]interface{}) (map[string]string, error) {
 	return result, nil
 }
 
+// Deletes a user
 func deleteUser(jsonMap map[string]interface{}) (map[string]string, error) {
 	uuid := jsonMap["id"]
 	if uuid == nil {
@@ -87,6 +90,7 @@ func deleteUser(jsonMap map[string]interface{}) (map[string]string, error) {
 	return result, nil
 }
 
+// Reserves funds
 func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
 	var balance, reserved float64
 	uid := jsonMap["userID"]
@@ -135,6 +139,7 @@ func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
 	return result, nil
 }
 
+// Charges the reserved funds from the user's account
 func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 	var balance, reserved, cost, totalBalance float64
 	serviceID := jsonMap["serviceID"]
@@ -168,6 +173,7 @@ func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 	return result, nil
 }
 
+// Gets the user balance
 func balance(jsonMap map[string]interface{}) (map[string]string, error) {
 	var balance float64
 	uuid := jsonMap["id"]
