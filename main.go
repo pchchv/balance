@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -8,7 +9,10 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
+
+var db *sql.DB
 
 // Load values from .env into the system
 func init() {
@@ -28,7 +32,7 @@ func getEnvValue(v string) string {
 
 // Deposits funds into the balance
 func deposit(jsonMap map[string]interface{}) (map[string]string, error) {
-	var balance float64
+	var balance, totalBalance float64
 	id := fmt.Sprint(jsonMap["id"])
 	funds, err := strconv.ParseFloat(fmt.Sprint(jsonMap["funds"]), 64)
 	if err != nil {
@@ -38,12 +42,16 @@ func deposit(jsonMap map[string]interface{}) (map[string]string, error) {
 	// TODO: Implement getting balance data from the database
 
 	balance += funds
+	totalBalance += funds
 	result := map[string]string{
 		"id":      id,
 		"balance": fmt.Sprint(balance),
 	}
 
-	// TODO: Implement data entry in the database
+	_, err = db.Exec("update Users set (balance = $1, totalBalance = $2) where id = $3", balance, totalBalance, id)
+	if err != nil {
+		return nil, err
+	}
 
 	return result, nil
 }
@@ -135,7 +143,10 @@ func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
 		"total balance": fmt.Sprint(totalBalance),
 	}
 
-	// TODO: Implement data entry in the database
+	_, err = db.Exec("update Users set (balance = $1, totalBalance = $2, reserved = $3) where id = $4", balance, totalBalance, reserved, user)
+	if err != nil {
+		return nil, err
+	}
 
 	return result, nil
 }
@@ -169,7 +180,10 @@ func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 		"total balance": fmt.Sprint(totalBalance),
 	}
 
-	// TODO: Implement data entry in the database
+	_, err := db.Exec("update Users set (balance = $1, totalBalance = $2, reserved = $3) where id = $4", balance, totalBalance, reserved, user)
+	if err != nil {
+		return nil, err
+	}
 
 	return result, nil
 }
@@ -194,6 +208,6 @@ func balance(jsonMap map[string]interface{}) (map[string]string, error) {
 }
 
 func main() {
-	db()
+	database()
 	server()
 }
