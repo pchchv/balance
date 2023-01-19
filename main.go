@@ -96,7 +96,10 @@ func deleteUser(jsonMap map[string]interface{}) (map[string]string, error) {
 	}
 	id := fmt.Sprint(uuid)
 
-	// TODO: Implement deletion of user data from the database
+	_, err := db.Exec("delete from Users where id = $1", id)
+	if err != nil {
+		return nil, err
+	}
 
 	result := map[string]string{
 		"id":      id,
