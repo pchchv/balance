@@ -75,7 +75,11 @@ func addUser(jsonMap map[string]interface{}) (map[string]string, error) {
 		"balance": fmt.Sprint(funds),
 	}
 
-	// TODO: Implement data entry in the database
+	_, err = db.Exec("insert into Users (id, balance) values ($1, $2)",
+		id, funds)
+	if err != nil {
+		return nil, err
+	}
 
 	return result, nil
 }
