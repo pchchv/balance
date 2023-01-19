@@ -32,14 +32,18 @@ func getEnvValue(v string) string {
 
 // Deposits funds into the balance
 func deposit(jsonMap map[string]interface{}) (map[string]string, error) {
-	var balance, totalBalance float64
+	var balance, totalBalance, reserved float64
 	id := fmt.Sprint(jsonMap["id"])
 	funds, err := strconv.ParseFloat(fmt.Sprint(jsonMap["funds"]), 64)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: Implement getting balance data from the database
+	row := db.QueryRow("select * from Users where id = $1", id)
+	err = row.Scan(&id, &balance, &totalBalance, &reserved)
+	if err != nil {
+		return nil, err
+	}
 
 	balance += funds
 	totalBalance += funds
@@ -104,7 +108,7 @@ func deleteUser(jsonMap map[string]interface{}) (map[string]string, error) {
 
 // Reserves funds
 func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
-	var reserved float64
+	var reserved, totalBalance float64
 	balance := 111.11
 	uid := jsonMap["userID"]
 	if uid == nil {
@@ -130,13 +134,17 @@ func reserve(jsonMap map[string]interface{}) (map[string]string, error) {
 		return nil, fmt.Errorf("wrong cost %v", err)
 	}
 
-	// TODO: Implement getting balance data from the database
+	row := db.QueryRow("select * from Users where id = $1", user)
+	err = row.Scan(&user, &balance, &totalBalance, &reserved)
+	if err != nil {
+		return nil, err
+	}
 
 	if balance < cost {
 		return nil, fmt.Errorf("the amount on the balance is less than the cost of the service! balance: %v, cost: %v", balance, cost)
 	}
 
-	totalBalance := balance
+	totalBalance = balance
 	balance -= cost
 	reserved += cost
 
@@ -162,9 +170,13 @@ func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 	if serviceID == nil {
 		return nil, fmt.Errorf("wrong service id")
 	}
-	// service := fmt.Sprint(serv)
+	service := fmt.Sprint(serviceID)
 
-	// TODO: Implement retrieval of service data from the database
+	row := db.QueryRow("select * from Services where id = $1", serviceID)
+	err := row.Scan(&service, &cost)
+	if err != nil {
+		return nil, err
+	}
 
 	uid := jsonMap["userID"]
 	if uid == nil {
@@ -172,7 +184,11 @@ func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 	}
 	user := fmt.Sprint(uid)
 
-	// TODO: Implement retrieving user data from the database
+	row = db.QueryRow("select * from Users where id = $1", user)
+	err = row.Scan(&user, &balance, &totalBalance, &reserved)
+	if err != nil {
+		return nil, err
+	}
 
 	totalBalance -= cost
 	reserved -= cost
@@ -184,7 +200,7 @@ func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 		"total balance": fmt.Sprint(totalBalance),
 	}
 
-	_, err := db.Exec("update Users set (balance = $1, totalBalance = $2, reserved = $3) where id = $4", balance, totalBalance, reserved, user)
+	_, err = db.Exec("update Users set (balance = $1, totalBalance = $2, reserved = $3) where id = $4", balance, totalBalance, reserved, user)
 	if err != nil {
 		return nil, err
 	}
@@ -194,18 +210,24 @@ func receipt(jsonMap map[string]interface{}) (map[string]string, error) {
 
 // Gets the user balance
 func balance(jsonMap map[string]interface{}) (map[string]string, error) {
-	var balance float64
+	var balance, totalBalance, reserved float64
 	uuid := jsonMap["id"]
 	if uuid == nil {
 		return nil, fmt.Errorf("wrong id")
 	}
 	id := fmt.Sprint(uuid)
 
-	// TODO: Implement retrieving user data from the database
+	row := db.QueryRow("select * from Users where id = $1", id)
+	err := row.Scan(&id, &balance, &totalBalance, &reserved)
+	if err != nil {
+		return nil, err
+	}
 
 	result := map[string]string{
-		"id":      id,
-		"balance": fmt.Sprint(balance),
+		"id":            id,
+		"balance":       fmt.Sprint(balance),
+		"reserved":      fmt.Sprint(reserved),
+		"total balance": fmt.Sprint(totalBalance),
 	}
 
 	return result, nil
