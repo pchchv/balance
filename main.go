@@ -194,5 +194,6 @@ func balance(jsonMap map[string]interface{}) (map[string]string, error) {
 }
 
 func main() {
+	db()
 	server()
 }
